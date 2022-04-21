@@ -1,0 +1,8 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "@confluxfans/contracts": "^0.2.5",
+    "@openzeppelin/contracts": "^4.4.1"
+  }
+}
