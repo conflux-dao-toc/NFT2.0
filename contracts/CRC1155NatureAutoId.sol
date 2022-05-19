@@ -70,38 +70,66 @@ contract CRC1155NatureAutoId is AccessControlEnumerable, CRC1155Enumerable, CRC1
      *
      * - the caller must have the `MINTER_ROLE`.
      */
+    // function mint(
+    //     address to,
+    //     uint256 amount,
+    //     bytes memory data
+    // ) public virtual {
+    //     require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoId: must have minter role to mint");
+    //     _mint(to, _tokenIdTracker.current()+1, amount, data);
+    //     _tokenIdTracker.increment();
+    // }
+
+    // 下方函数已固定为非同质化铸造，即每个id的数量只有1个。如果需要同质化业务，请自行更换为上方注释掉的原来的函数。
     function mint(
         address to,
-        uint256 amount,
         bytes memory data
     ) public virtual {
-        require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoIdature: must have minter role to mint");
-        _mint(to, _tokenIdTracker.current()+1, amount, data);
+        require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoId: must have minter role to mint");
+        _mint(to, _tokenIdTracker.current()+1, 1, data);
         _tokenIdTracker.increment();
     }
 
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] variant of {mint}.
      */
+    // function mintBatch(
+    //     address to,
+    //     uint256[] memory amounts,
+    //     bytes memory data
+    // ) public virtual {
+    //     require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoId: must have minter role to mint");
+    //     uint256[] memory tokenIds = new uint256[](amounts.length);
+    //     for (uint256 i = 0; i < amounts.length; i++) {
+    //         tokenIds[i] = _tokenIdTracker.current()+1;
+    //         _tokenIdTracker.increment();
+    //     }
+    //     _mintBatch(to, tokenIds, amounts, data);
+    // }
+    
+    // 下方函数已固定为非同质化铸造，即每个id的数量只有1个。如果需要同质化业务，请自行更换为上方注释掉的原来的函数。
     function mintBatch(
         address to,
-        uint256[] memory amounts,
+        uint256 amount,
         bytes memory data
     ) public virtual {
         require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoId: must have minter role to mint");
-        uint256[] memory tokenIds = new uint256[](amounts.length);
-        for (uint256 i = 0; i < amounts.length; i++) {
-            tokenIds[i] = _tokenIdTracker.current()+1;
+        uint256[] memory tokenIds = new uint256[](amount);
+        uint256[] memory amounts = new uint256[](amount);
+        for (uint256 i = 0; i < amount; i++) {
+            tokenIds[i] = _tokenIdTracker.current() + 1;
             _tokenIdTracker.increment();
+            amounts[i] = 1;
         }
         _mintBatch(to, tokenIds, amounts, data);
     }
 
-    //chy:批量铸造方法，直接给to账户铸造amount个顺延id的nft，每个id数量都是1。如果需要每个id有不同的数量，自行修改代码。
+
+    //chy:简化的批量铸造方法，直接给to账户铸造amount个顺延id的nft，每个id数量都是1。
     function batchAddItemByNumber(address _to, uint256 _amount)
         public
     {
-        require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoIdature: must have minter role to mint");
+        require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoId: must have minter role to mint");
         for (uint i = 0; i < _amount; i++) {
             _mint(_to, _tokenIdTracker.current()+1, 1, "");
             _tokenIdTracker.increment();
@@ -112,7 +140,7 @@ contract CRC1155NatureAutoId is AccessControlEnumerable, CRC1155Enumerable, CRC1
     function batchAddItemByAddress(address[] calldata _initialOwners) 
         public
     {
-        require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoIdature: must have minter role to mint");
+        require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoId: must have minter role to mint");
         uint256 _length = _initialOwners.length;
         for (uint i = 0; i < _length; i++) {
             _mint(_initialOwners[i], _tokenIdTracker.current()+1, 1, "");
