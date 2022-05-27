@@ -10,6 +10,9 @@ contract CRC721NatureAutoId is AccessControlEnumerable, CRC721Enumerable, Intern
 
     string private _URI;
 
+    //tokenId => FeatureCode, the Feature code is generally md5 code for resource files such as images or videos.
+    mapping(uint256 => uint256) public tokenFeatureCode;
+
     // Counter to auto generate token ID.
     uint256 private _currentTokenId;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -98,7 +101,7 @@ contract CRC721NatureAutoId is AccessControlEnumerable, CRC721Enumerable, Intern
         _currentTokenId = tokenId + amount;
     }
 
-    //chy:批量空投方法，给一组账户，分别空投1个顺延id的nft。
+    //chy:Batch airdrop method, giving a group of accounts each airdrop 1 nft with a parsimonious id.
     function batchAddItemByAddress(address[] calldata _initialOwners) 
         public
     {
@@ -109,6 +112,13 @@ contract CRC721NatureAutoId is AccessControlEnumerable, CRC721Enumerable, Intern
             _mint(_initialOwners[i], tokenId + i);
         }
         _currentTokenId = tokenId + _length;
+    }
+
+    //Optional functions：The feature code can only be set once for each id, and then it can never be change again。
+    function setTokenFeatureCode(uint256 tokenId, uint256 featureCode) public virtual {
+        require(hasRole(MINTER_ROLE, _msgSender()), "CRC721NatureAutoId: must have minter role to mint");
+        require(tokenFeatureCode[tokenId] == 0, "CRC721NatureAutoId: token Feature Code is already set up");
+        tokenFeatureCode[tokenId] = featureCode;
     }
 
     /**

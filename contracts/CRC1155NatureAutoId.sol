@@ -10,6 +10,9 @@ contract CRC1155NatureAutoId is AccessControlEnumerable, CRC1155Enumerable, CRC1
     using Counters for Counters.Counter;
     using Strings for uint256;
 
+    //tokenId => FeatureCode, the Feature code is generally md5 code for resource files such as images or videos.
+    mapping(uint256 => uint256) public tokenFeatureCode;
+
     // Counter to auto generate token ID.
     Counters.Counter private _tokenIdTracker;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -146,6 +149,13 @@ contract CRC1155NatureAutoId is AccessControlEnumerable, CRC1155Enumerable, CRC1
             _mint(_initialOwners[i], _tokenIdTracker.current()+1, 1, "");
             _tokenIdTracker.increment();
         }
+    }
+
+    //Optional functions：The feature code can only be set once for each id, and then it can never be change again。
+    function setTokenFeatureCode(uint256 tokenId, uint256 featureCode) public virtual {
+        require(hasRole(MINTER_ROLE, _msgSender()), "CRC721NatureAutoId: must have minter role to mint");
+        require(tokenFeatureCode[tokenId] == 0, "CRC721NatureAutoId: token Feature Code is already set up");
+        tokenFeatureCode[tokenId] = featureCode;
     }
 
     /**
