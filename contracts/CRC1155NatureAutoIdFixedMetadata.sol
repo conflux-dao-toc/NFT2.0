@@ -169,8 +169,8 @@ contract CRC1155NatureAutoIdFixedMetadata is AccessControlEnumerable, CRC1155Enu
 
     //Optional functions：The feature code can only be set once for each id, and then it can never be change again。
     function setTokenFeatureCode(uint256 tokenId, uint256 featureCode) public virtual {
-        require(hasRole(MINTER_ROLE, _msgSender()), "CRC721NatureAutoId: must have minter role to mint");
-        require(tokenFeatureCode[tokenId] == 0, "CRC721NatureAutoId: token Feature Code is already set up");
+        require(hasRole(MINTER_ROLE, _msgSender()), "CRC1155NatureAutoIdFixedMetadata: must have minter role to mint");
+        require(tokenFeatureCode[tokenId] == 0, "CRC1155NatureAutoIdFixedMetadata: token Feature Code is already set up");
         tokenFeatureCode[tokenId] = featureCode;
     }
 
